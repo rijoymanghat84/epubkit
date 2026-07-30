@@ -1,0 +1,18 @@
+services:
+  epubkit:
+    build: .
+    container_name: epubkit
+    restart: unless-stopped
+    ports:
+      - "8123:8000"
+    volumes:
+      - ./tmp/uploads:/app/tmp/uploads
+      - ./tmp/outputs:/app/tmp/outputs
+    environment:
+      - TZ=America/Toronto
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
