@@ -1,6 +1,6 @@
 services:
   epubkit:
-    build: .
+    image: ghcr.io/rijoymanghat84/epubkit:latest
     container_name: epubkit
     restart: unless-stopped
     ports:
