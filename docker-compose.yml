@@ -1,9 +1,17 @@
+version: '3.9'
+
 services:
   epubkit:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: epubkit:latest
     container_name: epubkit
     restart: unless-stopped
     ports:
-      - "8123:8000"
+      - "8123:8000"  # NAS port 8123 → container port 8000
+    volumes:
+      - ./uploads:/app/tmp/uploads
+      - ./outputs:/app/tmp/outputs
     environment:
       - TZ=America/Toronto
