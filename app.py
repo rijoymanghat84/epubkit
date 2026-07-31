@@ -196,6 +196,7 @@ async def process_sse(
         })
 
     async def generate():
+        nonlocal output_path
         # Start processing in thread pool
         future = loop.run_in_executor(
             executor,
@@ -218,6 +219,18 @@ async def process_sse(
 
         # Wait for the processing to complete and get the report
         report: ProcessingReport = await future
+
+        # Rename the physical output to a proper "Author - Title.epub" filename
+        # so files on disk (and in the NAS folder browser) have real book names.
+        if report.success and report.output_filename:
+            proper_path = out_dir / report.output_filename
+            try:
+                if (os.path.exists(output_path) and
+                        os.path.abspath(str(proper_path)) != os.path.abspath(output_path)):
+                    os.rename(output_path, str(proper_path))
+                    output_path = str(proper_path)
+            except Exception:
+                pass  # keep output.epub if rename fails (invalid chars etc.)
 
         # Send final report
         final = {
